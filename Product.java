@@ -1,20 +1,31 @@
 package com.ws101.longcopdayday.model;
 
+import jakarta.persistence.*;
 import lombok.*;
 
 /**
- * Data entity representing an e-commerce product.
+ * Product entity representing store items.
+ * Many products belong to one category.
  */
+@Entity
+@Table(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
-    private Long id; // Unique identifier [cite: 40]
-    private String name; // Product name [cite: 41]
-    private String description; // Product description [cite: 42]
-    private double price; // Product price [cite: 43]
-    private String category; // Product category [cite: 44]
-    private int stockQuantity; // Stock level [cite: 45]
-    private String imageUrl; // Optional image path [cite: 46]
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String description;
+    private double price;
+    private int stockQuantity;
+    private String imageUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
