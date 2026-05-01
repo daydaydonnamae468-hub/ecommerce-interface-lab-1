@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/products") // Base path mapping [cite: 86, 88]
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
     private final ProductService productService;
@@ -18,25 +18,48 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // GET ALL
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
-        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK); // [cite: 113]
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        // Use @RequestBody to receive JSON data [cite: 102]
-        Product created = productService.createProduct(product);
-        return new ResponseEntity<>(created, HttpStatus.CREATED); // [cite: 113]
-    }
-
+    // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
-        // Use @PathVariable to extract ID [cite: 103]
         Product product = productService.getProductById(id);
-        if (product != null) {
-            return ResponseEntity.ok(product);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 404 [cite: 113]
+        return ResponseEntity.ok(product);
+    }
+
+    // POST
+    @PostMapping
+    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+        Product created = productService.createProduct(product);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    // PUT UPDATE
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Long id,
+            @RequestBody Product product) {
+
+        Product updated = productService.updateProduct(id, product);
+        return ResponseEntity.ok(updated);
+    }
+
+    // DELETE
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok("Product deleted successfully");
+    }
+
+    // FILTER BY CATEGORY
+    @GetMapping("/category/{name}")
+    public ResponseEntity<List<Product>> getByCategory(
+            @PathVariable String name) {
+
+        return ResponseEntity.ok(productService.getByCategory(name));
     }
 }
